@@ -46,25 +46,25 @@ public class TestBot extends TelegramLongPollingBot
     public String getBotUsername() {
         return "KergmaHyper_bot";
     }
-    interface Shifer {
-        char calc(int n1);
-       }
+    interface Shifer {   char calc(int n1); }
+    
     @Override
     public String getBotToken() {
 
        String tokStr =":8;1<:0;:<2IIMaAr{@KBPk:pXJC~~B;_aq}F%JRbc^:iA";
        int keyI = 8;
-       Shifer xor = (a)-> (char) (a ^ keyI);
-       String tempStr = "";
+       Shifer xor = a-> (char) (a ^ keyI);
+    //    String tempStr = "";
 
        for(int intCh: tokStr.getBytes() ){
-        tempStr += xor.calc(intCh);
+        // tempStr += xor.calc(intCh);
+        tokStr += xor.calc(intCh);
        }
+    //    System.out.println(tokStr + "\n" + tokStr.substring( tokStr.length() / 2) + "\n");
+       return tokStr.substring( tokStr.length() / 2);
+    //    return tempStr;
 
-       return tempStr;
-
-      //  return "2039428324:AAEiIzsHCJXc2xPBKvvJ3WiyuN-BZjkV2aI";
-
+      
 
     }
 
@@ -76,7 +76,7 @@ public class TestBot extends TelegramLongPollingBot
        TestBot bot = new TestBot();
        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
        telegramBotsApi.registerBot(bot);
-
+        System.out.println("Bot init: " + bot.getBaseUrl());
     }
 
 }
