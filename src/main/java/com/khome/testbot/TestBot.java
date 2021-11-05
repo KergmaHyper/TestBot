@@ -2,18 +2,22 @@ package com.khome.testbot;
 
 
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.plaf.synth.SynthStyle;
+
 import com.khome.entity.Currency;
+import com.khome.service.CurrencyModeService;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage.SendMessageBuilder;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -26,18 +30,75 @@ import lombok.SneakyThrows;
 
 public class TestBot extends TelegramLongPollingBot
 {
-  
+ private CurrencyModeService currencyModeService = CurrencyModeService.getInstance();
+
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
+       
+        if(update.hasCallbackQuery()){
+            handleCallback(update.getCallbackQuery());
+        } else   if (update.hasMessage()) {
             handleMessage(update.getMessage());
             
             }
         }        
-    
+    @SneakyThrows
+    private void handleCallback(CallbackQuery callbackQuery){
+        System.out.println("Begin callback handle");
+        Message message = callbackQuery.getMessage();
+        String[] param = callbackQuery.getData().split(":");
+        
+        String action = param[0];
+       
+         Currency newCurrency = Currency.valueOf(param[1]);
+        switch(action){
+            case "ORIGIN":
+            System.out.println(action +"->"+ newCurrency);
+            currencyModeService.setOriginalCurrency(message.getChatId(), newCurrency);
+            break;
+
+            case "TARGET":
+            System.out.println(action +"->"+ newCurrency);
+            currencyModeService.setTargetCurrency(message.getChatId(), newCurrency);
+            break;
+        }
+
+// buuton create
+
+                    List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+                   Currency originCurrency = currencyModeService.getOriginalCurrency(message.getChatId());
+                   Currency targetCurrency = currencyModeService.getTargetCurrency(message.getChatId());
+                   
+                   for (Currency currency : Currency.values()) {
+                       buttons.add(
+                        Arrays.asList(
+                         InlineKeyboardButton.builder()
+                            .text(getCurrencyButton(originCurrency, currency))
+                            .callbackData("ORIGIN:" + currency)
+                            .build(),
+                         InlineKeyboardButton.builder()
+                            .text(getCurrencyButton(targetCurrency, currency))
+                            .callbackData("TARGET:" + currency)
+                            .build()
+                           )
+                       );
+                       System.out.println("buttons added " + currency);
+                   };
+
+// stop button create
+        execute(EditMessageReplyMarkup.builder()
+        .chatId(message.getChatId().toString())
+        .messageId(message.getMessageId())
+        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+        .build());
+        System.out.println("keyboard buttons updated");
+        
+    }
+
     @SneakyThrows
     private void handleMessage(Message message){
+        System.out.println("Begin message handle");
         if(message.hasText() && message.hasEntities()){
             Optional<MessageEntity> commandEntity =
             message.getEntities().stream().filter(e->"bot_command".equals(e.getType())).findFirst();
@@ -46,26 +107,41 @@ public class TestBot extends TelegramLongPollingBot
                
                switch (command){
                    case "/set_currency":
+                   System.out.println("case '/set_currency' command");
+                   
                    List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+                   Currency originCurrency = currencyModeService.getOriginalCurrency(message.getChatId());
+                   Currency targetCurrency = currencyModeService.getTargetCurrency(message.getChatId());
+                   
                    for (Currency currency : Currency.values()) {
                        buttons.add(
-                           Arrays.asList(
-                               InlineKeyboardButton.builder().text("orig "+currency.name()).callbackData("ORIGIN " + currency).build(),
-                               InlineKeyboardButton.builder().text("targ "+currency.name()).callbackData("TARGET " + currency).build()
+                        Arrays.asList(
+                         InlineKeyboardButton.builder()
+                            .text(getCurrencyButton(originCurrency, currency))
+                            .callbackData("ORIGIN:" + currency)
+                            .build(),
+                         InlineKeyboardButton.builder()
+                            .text(getCurrencyButton(targetCurrency, currency))
+                            .callbackData("TARGET:" + currency)
+                            .build()
                            )
                        );
+                       System.out.println("buttons added " + currency);
                    };
                     execute(SendMessage.builder()
                     .chatId(message.getChatId().toString())
                     .text("Select ORIGIN and TARGET currency")
                     .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
                     .build());
+                    System.out.println("message sended");
                    return;
                }
             }
         }
     }
-
+    private String getCurrencyButton(Currency saved, Currency current) {
+        return saved == current ? current + " ✅": current.name();
+    }
     @Override
     public String getBotUsername() {
         return "KergmaHyper_bot";
