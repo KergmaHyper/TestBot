@@ -7,8 +7,12 @@ public class NbrbCurrencyConvertionService  implements CurencyConvertionService{
 
     @Override
     public double getCurrencyConversion(Currency originCurrency, Currency targetCurrency) {
-        // TODO Auto-generated method stub
-        return 1;
+       if (originCurrency == targetCurrency) {
+           return 1;
+       } else {
+
+        return 0;
+       }
     }
     
 }

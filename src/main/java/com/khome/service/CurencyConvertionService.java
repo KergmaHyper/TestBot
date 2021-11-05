@@ -5,6 +5,6 @@ import com.khome.service.imp.NbrbCurrencyConvertionService;
 
 public interface CurencyConvertionService {
     static CurencyConvertionService getInstance(){return new NbrbCurrencyConvertionService();}
-double getCurrencyConversion(Currency originCurrency, Currency targetCurrency);
+    double getCurrencyConversion(Currency originCurrency, Currency targetCurrency);
 
 }

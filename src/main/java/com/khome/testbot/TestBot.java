@@ -8,9 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.plaf.synth.SynthStyle;
-
 import com.khome.entity.Currency;
+import com.khome.service.CurencyConvertionService;
 import com.khome.service.CurrencyModeService;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,12 +24,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import javassist.bytecode.stackmap.BasicBlock.Catch;
 import lombok.SneakyThrows;
 
 
 public class TestBot extends TelegramLongPollingBot
 {
  private CurrencyModeService currencyModeService = CurrencyModeService.getInstance();
+ private CurencyConvertionService curencyConvertionService= CurencyConvertionService.getInstance();
 
     @Override
     @SneakyThrows
@@ -137,6 +138,27 @@ public class TestBot extends TelegramLongPollingBot
                    return;
                }
             }
+        }
+        if(message.hasText()) {
+            String messageText = message.getText();
+            Optional<Double> value = parseDouble(messageText);
+            Currency originCurrency =  currencyModeService.getOriginalCurrency(message.getChatId());
+            Currency targetCurrency = currencyModeService.getTargetCurrency(message.getChatId());
+            Double ratio = curencyConvertionService.getCurrencyConversion(originCurrency, targetCurrency);
+            if (value.isPresent()) {
+                execute(SendMessage.builder()
+                .chatId(message.getChatId().toString())
+                .text(String.format("%4.2f %s %4.2f %s", value.get(), originCurrency, value.get() * ratio, targetCurrency))
+                .build());
+                return;
+            }
+        }
+    }
+    private Optional<Double> parseDouble(String messageText) {
+        try {
+            return Optional.of(Double.parseDouble(messageText));
+        } catch(Exception e) {
+            return Optional.empty();
         }
     }
     private String getCurrencyButton(Currency saved, Currency current) {
