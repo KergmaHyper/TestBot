@@ -1,15 +1,12 @@
 package com.khome.testbot;
 
-
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import com.khome.entity.Currency;
-import com.khome.service.CurencyConvertionService;
+import com.khome.service.CurrencyConvertionService;
 import com.khome.service.CurrencyModeService;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -26,11 +23,10 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import lombok.SneakyThrows;
 
-
 public class TestBot extends TelegramLongPollingBot
 {
  private CurrencyModeService currencyModeService = CurrencyModeService.getInstance();
- private CurencyConvertionService curencyConvertionService= CurencyConvertionService.getInstance();
+ private CurrencyConvertionService curencyConvertionService= CurrencyConvertionService.getInstance("PRIVAT");
 
     @Override
     @SneakyThrows
