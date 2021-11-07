@@ -151,25 +151,6 @@ public class TestBot extends TelegramLongPollingBot
     
     @Override
     public String getBotToken() {
-<<<<<<< HEAD
-
-       String tokStr =":8;1<:0;:<2IIMaAr{@KBPk:pXJC~~B;_aq}F%JRbc^:iA";
-       int keyI = 8;
-
-       Shifer xor = (a)-> (char) (a ^ keyI);
-       
-       String tempStr = "";
-
-       for(int intCh: tokStr.getBytes() ){
-        tempStr += xor.calc(intCh);
-       }
-
-       return tempStr;
-
-      //  return "2039428324:AAEiIzsHCJXc2xPBKvvJ3WiyuN-BZjkV2aI";
-
-
-=======
         String tokStr =":8;1<:0;:<2IIMaAr{@KBPk:pXJC~~B;_aq}F%JRbc^:iA";
         int keyI = 8;
         Shifer xor = a-> (char)(a ^ keyI);
@@ -177,7 +158,6 @@ public class TestBot extends TelegramLongPollingBot
             tokStr += xor.calc(intCh);
         }
         return tokStr.substring(tokStr.length() / 2);
->>>>>>> 7c68d86bca36c8787804061ce09c368db2992451
     }
 
    
