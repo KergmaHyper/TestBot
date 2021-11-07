@@ -24,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import javassist.bytecode.stackmap.BasicBlock.Catch;
 import lombok.SneakyThrows;
 
 

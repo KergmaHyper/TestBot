@@ -1,1 +1,6 @@
 *.class
+./../*.class
+.classpath
+.factorypath
+
+
