@@ -6,14 +6,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.khome.entity.Currency;
-import com.khome.service.CurencyConvertionService;
+import com.khome.service.CurrencyConvertionService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
-public class NbrbCurrencyConvertionService  implements CurencyConvertionService{
+public class NBUCurrencyConvertionService  implements CurrencyConvertionService{
 
     @SneakyThrows
     @Override
@@ -40,9 +40,7 @@ public class NbrbCurrencyConvertionService  implements CurencyConvertionService{
         String ccKey = "";
         Double originRate = 1.0;
         Double targetRate = 1.0;
-        // System.out.println(originCurrency.name());
-        // System.out.println(targetCurrency.toString());
-
+        
         for (Object cur : jsonArray) {
             json = (JSONObject) cur;
             ccKey = json.getString("cc");
