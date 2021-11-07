@@ -54,7 +54,9 @@ public class TestBot extends TelegramLongPollingBot
 
        String tokStr =":8;1<:0;:<2IIMaAr{@KBPk:pXJC~~B;_aq}F%JRbc^:iA";
        int keyI = 8;
+
        Shifer xor = (a)-> (char) (a ^ keyI);
+       
        String tempStr = "";
 
        for(int intCh: tokStr.getBytes() ){
